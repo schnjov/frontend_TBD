@@ -1,5 +1,5 @@
 <template>
-  <v-app light class="login">
+  <div class="login">
     <v-container fluid fill-height class="blurBG">
       <v-layout align-center>
         <v-flex md6 offset-md3>
@@ -17,7 +17,7 @@
             </v-card-title>
             <v-divider></v-divider>
             <v-card-text>
-              <p>Porfavor ingrese sus datos de acceso</p>
+              <p>Por favor ingrese sus datos de acceso</p>
               <v-form>
                 <v-text-field
                   v-model="formValues.email"
@@ -35,13 +35,12 @@
               </v-form>
             </v-card-text>
             <v-divider></v-divider>
-            <!-- Editar estas acciones una vez backend sea implementado -->
             <v-card-actions :class="{ 'pa-3': $vuetify.breakpoint.smAndUp }">
-              <v-btn v-on:click="goToRegister" color="info" :large="$vuetify.breakpoint.smAndUp">
+              <v-btn @click="goToRegister" color="info" :large="$vuetify.breakpoint.smAndUp">
                 Regístrate
               </v-btn>
               <v-spacer></v-spacer>
-              <v-btn v-on:click="loginHandler"  color="info" :large="$vuetify.breakpoint.smAndUp">
+              <v-btn @click="loginHandler" color="info" :large="$vuetify.breakpoint.smAndUp">
                 Ingresar
               </v-btn>
             </v-card-actions>
@@ -49,24 +48,24 @@
         </v-flex>
       </v-layout>
     </v-container>
-  </v-app>
+  </div>
 </template>
 
 <script>
-import {mapGetters,mapActions} from "vuex";
 import UserServices from "~/services/UserServices";
 import jwt_decode from 'jwt-decode';
+
 export default {
-  name: "login",
-  data(){
-    return{
+  name: "LoginPage",
+  data() {
+    return {
       formValues: {
         clave: '',
         email: ''
       },
     }
   },
-  methods:{
+  methods: {
     goToRegister() {
       this.$emit('change-form');
     },
@@ -79,14 +78,16 @@ export default {
 
           if (response.status === 200 && response.data.jwtToken) {
             const token = response.data.jwtToken;
-            localStorage.setItem("token",token);
-            // Luego usa `decodedSecret` en lugar de `secret` en `jwt.verify`
+            localStorage.setItem("token", token);
+
             var decoded = jwt_decode(String(token));
-            console.log(decoded)
-            if (decoded.roles.authority === "ROLE_VOLUNTARIO"){
-              alert("Voluntario")
-            }else if (decoded.roles.authority === "ROLE_INSTITUCION"){
-              alert("Institucion")
+
+            if (decoded.roles.authority === "ROLE_VOLUNTARIO") {
+              alert("Voluntario");
+              this.$router.push("/emergencias"); // Redirige a la página de emergencias
+            } else if (decoded.roles.authority === "ROLE_INSTITUCION") {
+              alert("Institucion");
+              this.$router.push("/emergencias"); // Redirige a la página de emergencias
             }
           } else {
             console.error('Failed to log in:', response);
@@ -96,10 +97,8 @@ export default {
         }
       }
     }
-
   }
 }
-
 </script>
 
 <style scoped>
@@ -109,6 +108,7 @@ export default {
   background-repeat: no-repeat;
   background-position: center;
 }
+
 .blurBG {
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);

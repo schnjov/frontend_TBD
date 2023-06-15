@@ -63,6 +63,15 @@ export default {
       }
     }
   },
+  router: {
+    extendRoutes(routes, resolve) {
+      routes.push({
+        name: 'emergencias',
+        path: '/emergencias',
+        component: resolve(__dirname, 'pages/emergencias.vue')
+      })
+    }
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
