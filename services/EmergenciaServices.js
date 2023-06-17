@@ -8,6 +8,14 @@ export default {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     return Api().get('/api/emergencias');
   },
+  toggleEmergencia(token,id) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    return Api().put('/api/emergencias/cambiar/estado/'+String(id));
+  },
+  countTasks(token,id_emergencia) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    return Api().get('/api/emergencias/count/'+String(id_emergencia));
+  }
 
 
 }

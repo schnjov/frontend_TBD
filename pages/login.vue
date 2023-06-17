@@ -81,14 +81,9 @@ export default {
             localStorage.setItem("token", token);
 
             var decoded = jwt_decode(String(token));
+            this.$router.push("/emergencias");
 
-            if (decoded.roles.authority === "ROLE_VOLUNTARIO") {
-              alert("Voluntario");
-              this.$router.push("/emergencias"); // Redirige a la página de emergencias
-            } else if (decoded.roles.authority === "ROLE_INSTITUCION") {
-              alert("Institucion");
-              this.$router.push("/emergencias"); // Redirige a la página de emergencias
-            }
+
           } else {
             console.error('Failed to log in:', response);
           }
