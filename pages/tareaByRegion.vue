@@ -16,10 +16,11 @@
       <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
       <l-marker
         v-for="(tarea, index) in tareas"
+        v-if="tarea?.ubicacion"
         :key="index"
-        :lat-lng="tarea.ubicacion"
+        :lat-lng=tarea.ubicacion
       >
-        <l-tooltip>{{ tarea.descripcion }}</l-tooltip>
+        <l-tooltip>{{ tarea.asunto_tarea }}</l-tooltip>
       </l-marker>
     </l-map>
   </div>
@@ -30,6 +31,15 @@ import { LMap, LTileLayer, LMarker, LTooltip } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import TaskServices from '~/services/TaskServices';
 import EmergenciaServices from "~/services/EmergenciaServices";
+import "leaflet/dist/images/marker-shadow.png";
+
+import L from 'leaflet';
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+  iconUrl: require('leaflet/dist/images/marker-icon.png'),
+  shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+});
 
 export default {
   components: {
@@ -65,7 +75,8 @@ export default {
         {label: 'Aysén del General Carlos Ibáñez del Campo', value: 11},
         {label: 'Magallanes y de la Antártica Chilena', value: 12},
       ],
-    };
+      ubicacionMarcador: null
+  };
   },
   methods: {
     async fetchTasks() {
@@ -76,15 +87,22 @@ export default {
       }
 
       try {
-        const response = await TaskServices.getTasksByRegion(token, this.selectedRegion.value);
+        const response = await TaskServices.getTasksByRegion(token, this.selectedRegion);
         this.tareas = response.data;
         if (this.tareas.length > 0) {
-          // Buscar la emergencia para la primera tarea
-          const emergenciaResponse = await EmergenciaServices.findByTarea(token, this.tareas[0].id_emergencia);
-          const emergencia = emergenciaResponse.data;
+          let i = 0;
+          while (i < this.tareas.length) {
+            const response = await EmergenciaServices.findByTarea(token, this.tareas[i].id_emergencia);
+            this.tareas[i].ubicacion = response.data.ubicacion;
+            console.log(this.tareas[i].ubicacion);
+            i++;
+          }
 
-          // Centrar el mapa en la ubicación de la emergencia
-          this.center = emergencia.ubicacion;
+          // Centrar el mapa en la ubicación de la primera emergencia
+          if (this.tareas[0].ubicacion) {
+            this.ubicacionMarcador = [this.tareas[0].ubicacion.lat, this.tareas[0].ubicacion.lon];
+            this.center = this.ubicacionMarcador;
+          }
         }
       } catch (error) {
         console.error('Error fetching tasks:', error);
@@ -93,7 +111,7 @@ export default {
   },
   async created() {
     try {
-      this.fetchTasks();
+      await this.fetchTasks();
     } catch (error) {
       console.error('Error fetching tasks:', error);
     }
@@ -105,5 +123,10 @@ export default {
 .l-map {
   height: 600px;
   width: 100%;
+}
+
+.v-select {
+  position: relative;
+  z-index: 1000;
 }
 </style>
