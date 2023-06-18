@@ -29,6 +29,7 @@
 import { LMap, LTileLayer, LMarker, LTooltip } from 'vue2-leaflet';
 import 'leaflet/dist/leaflet.css';
 import TaskServices from '~/services/TaskServices';
+import EmergenciaServices from "~/services/EmergenciaServices";
 
 export default {
   components: {
@@ -75,11 +76,15 @@ export default {
       }
 
       try {
-        const response = await TaskServices.getTasksByRegion(token,this.selectedRegion.value);
+        const response = await TaskServices.getTasksByRegion(token, this.selectedRegion.value);
         this.tareas = response.data;
         if (this.tareas.length > 0) {
-          // Center the map on the first task
-          this.center = this.tareas[0].ubicacion;
+          // Buscar la emergencia para la primera tarea
+          const emergenciaResponse = await EmergenciaServices.findByTarea(token, this.tareas[0].id_emergencia);
+          const emergencia = emergenciaResponse.data;
+
+          // Centrar el mapa en la ubicación de la emergencia
+          this.center = emergencia.ubicacion;
         }
       } catch (error) {
         console.error('Error fetching tasks:', error);

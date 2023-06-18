@@ -15,7 +15,9 @@ export default {
   countTasks(token,id_emergencia) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     return Api().get('/api/emergencias/count/'+String(id_emergencia));
+  },
+  findByTarea(token, tareaId) {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    return Api().get('/api/emergencias/ByTarea/' + String(tareaId));
   }
-
-
 }
