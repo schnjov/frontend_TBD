@@ -1,45 +1,53 @@
 <template>
-  <div class="emergencias">
-    <v-container fluid fill-height class="blurBG">
-      <v-layout align-center justify-space-around>
-        <v-flex md10 offset-md1>
-          <v-card elevation="4" class="blurCard" tag="section">
-            <v-card-title class="headline font-weight-bold card-title">
-              <span>Listado de Emergencias</span>
-            </v-card-title>
-            <v-divider></v-divider>
-            <v-card-text v-if="contentLoaded">
-              <v-list>
-                <v-list-item
-                  v-for="emergencia in emergencias"
-                  :key="emergencia.id_emergencia"
-                  class="emergencia-item"
-                  @click="goToEmergencia(emergencia.id_emergencia)"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title class="asunto">{{ emergencia.asunto }}</v-list-item-title>
-                    <v-list-item-subtitle class="descripcion">{{ emergencia.descripcion }}</v-list-item-subtitle>
-                    <v-list-item-subtitle class="direccion">{{ emergencia.direccion }}</v-list-item-subtitle>
-                    <v-list-item-subtitle class="fecha">{{ emergencia.fecha }}</v-list-item-subtitle>
-                    <v-list-item-subtitle class="activa">{{ emergencia.activa }}</v-list-item-subtitle>
-                    <v-list-item-subtitle class="institucion">{{ emergencia.id_institucion }}</v-list-item-subtitle>
-                    <v-list-item-subtitle class="tasks">Cantidad de tareas: {{ emergencia.tasks }}</v-list-item-subtitle>
-                    <v-switch
-                      v-if="isInstitution"
-                      v-model="emergencia.activa"
-                      @change="toggleEmergencia(emergencia)"
-                      :label="`Emergencia ${emergencia.activa ? 'Activa' : 'Inactiva'}`"
-                    ></v-switch>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-card-text>
-            <v-divider></v-divider>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
+  <div>
+    <v-toolbar color="#00A499" >
+      <v-toolbar-title class="font-weight-bold" >EMERGENCIAS</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn color="secondary" @click="goToMap">Ver Tareas en el Mapa</v-btn>
+    </v-toolbar>
+    <div class="emergencias">
+      <v-container fluid fill-height class="blurBG">
+        <v-layout align-center justify-space-around>
+          <v-flex md10 offset-md1>
+            <v-card elevation="4" class="blurCard" tag="section">
+              <v-card-title class="headline font-weight-bold card-title">
+                <span>Listado de Emergencias</span>
+              </v-card-title>
+              <v-divider></v-divider>
+              <v-card-text v-if="contentLoaded">
+                <v-list>
+                  <v-list-item
+                    v-for="emergencia in emergencias"
+                    :key="emergencia.id_emergencia"
+                    class="emergencia-item"
+                    @click="goToEmergencia(emergencia.id_emergencia)"
+                  >
+                    <v-list-item-content>
+                      <v-list-item-title class="asunto">Asunto: {{ emergencia.asunto }}</v-list-item-title>
+                      <v-list-item-subtitle class="descripcion">Descripcion: {{ emergencia.descripcion }}</v-list-item-subtitle>
+                      <v-list-item-subtitle class="direccion">Direccion: {{ emergencia.direccion }}</v-list-item-subtitle>
+                      <v-list-item-subtitle class="fecha">Fecha: {{ emergencia.fecha }}</v-list-item-subtitle>
+                      <v-list-item-subtitle class="activa">Estado: {{ emergencia.activa }}</v-list-item-subtitle>
+                      <v-list-item-subtitle class="institucion">Institucion: {{ emergencia.id_institucion }}</v-list-item-subtitle>
+                      <v-list-item-subtitle class="tasks">Cantidad de tareas: {{ emergencia.tasks }}</v-list-item-subtitle>
+                      <v-switch
+                        v-if="isInstitution"
+                        v-model="emergencia.activa"
+                        @change="toggleEmergencia(emergencia)"
+                        :label="`Emergencia ${emergencia.activa ? 'Activa' : 'Inactiva'}`"
+                      ></v-switch>
+                    </v-list-item-content>
+                  </v-list-item>
+                </v-list>
+              </v-card-text>
+              <v-divider></v-divider>
+            </v-card>
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </div>
   </div>
+
 </template>
 
 <script>
@@ -74,6 +82,9 @@ export default {
   methods: {
     goToEmergencia(id) {
       //
+    },
+    goToMap() {
+      window.location.href='/tareas';
     },
     async toggleEmergencia(emergencia) {
       const token = localStorage.getItem('token');

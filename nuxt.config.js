@@ -70,6 +70,11 @@ export default {
         path: '/emergencias',
         component: resolve(__dirname, 'pages/emergencias.vue')
       })
+      routes.push({
+        name: 'tareas',
+        path: '/tareas',
+        component: resolve(__dirname, 'pages/tareaByRegion.vue')
+      })
     }
   },
 
